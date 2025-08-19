@@ -34,20 +34,21 @@ int CharToInt(char n[],int len){
 /*Recibe un array de caracteres el cual es usado para representar * 
  * los colores en Formato RGB, pinta pixel por pixel la imagen    *
  * en la ventana                                                  */
-void DrawImg(unsigned char buffer[],int fin,Color c,int x,int y,int w,int h,int size){
-
-  for(int i = fin; i < (size-3);i+=3){
+void DrawImg2(unsigned char buffer[],Color c,int w,int h,int size){
+  int x = 0;
+  int y = 0;
+  for(int i = 0; i < size-3;i+=3){
     c.a = 255;
-    c.r = buffer[i];
-    c.b = buffer[i+1];
-    c.g = buffer[i+2];
-    if(x != 0 && x % w == 0){
-      printf("%d soy X. %d. Soy W",x,w);
+    c.r = buffer[i+0];
+    c.b = buffer[i+2];
+    c.g = buffer[i+1];
+      DrawPixel(ANCHO/2-(w/2)+x,ALTO/2-(h/2)+y, c);
+      x ++;
+    if( x == w){
+      //printf("%d soy X. %d. Soy W",x,w);
       y ++;
       x = 0;
     }
-    DrawPixel(ANCHO/2-w/2+x,ALTO/2-h/2+y, c);
-    x ++;
   }
 }
 
@@ -123,65 +124,67 @@ void CutHeader(unsigned char header[],char width[],char height[],int len){
   }
 }
 
+void ImgZoom(float* zoom){
+    if(IsKeyPressed(KEY_Z)){
+      *zoom += 0.1f;
+
+    }else {
+      if(IsKeyPressed(KEY_M)){
+        *zoom -= 0.1f;
+      }
+    }
+}
+
 int main(){
   FILE *f;
   f = fopen("simple.ppm","rb");
-  unsigned char header[32];
+  //Todo: Esto esta mal, pero encontramos el error.
+  unsigned char header[15];
   fread(header,sizeof(header),1,f);
   if(f == NULL){
     printf("Archivo no encontrado\n");
     exit(1);
   }
-  int fin = LenHeader(header);
+  //int fin = LenHeader(header);
   Color c;
-  int x = 0;
-  int y = 0;
   char height[4];
   char width[4];
   int len = sizeof(header)/sizeof(header[0]);
   CutHeader(header,width,height, len);
-  printf("%s %s\n",width,height);
+  //TOdo: arreglar el problema con la longitud de los numeros
   int lw = sizeof(width)/sizeof(width[0]) -2;
   int lh = sizeof(width)/sizeof(width[0]) -2;
   int w = CharToInt(width, lw);
   int h = CharToInt(height, lh);
   Camera2D cam = {
-      .offset = {
-      .x = 0,//(float) ANCHO/2-(float)w/2,
-      .y =(float) ALTO/2-(float)h/2,
+    .zoom = 1.f,
+    .offset = {
+      .x = (float) ANCHO/2,
+      .y = (float) ALTO/2
     },
     .target = {
-      .x = (float)ANCHO/2-(float)w/2+x,
-      .y = (float)ALTO/2-(float)h/2+y
-
+      .x = (float)ANCHO/2,
+      .y = (float)ALTO/2,
     },
     .rotation = 0,
-    .zoom = 1.f,
-
   };
-  uint32_t size = (w*h + fin )*3;
+
+  uint32_t size = (w*h)*3;
   unsigned char* buffer = (unsigned char*)malloc(size);
   /*if(buffer == NULL){
     printf("Algo salio mal\n");
     exit(1);
   }*/
-  unsigned int leidos = fread(buffer,size,1,f);
-  printf("esoty en leidos %d\n",leidos);
+  fread(buffer,size,1,f);
   fclose(f);
  InitWindow(ANCHO,ALTO, "vamos a ver que es lo que pasa");
+  SetTargetFPS(60);
  while (!WindowShouldClose()) {
    BeginDrawing();
    ClearBackground(RAYWHITE);
-    if(IsKeyPressed(KEY_Z)){
-      cam.zoom += 0.5f;
-      
-    }else {
-      if(IsKeyPressed(KEY_MINUS)){
-        cam.zoom -= 0.5f;
-      }
-    }
     BeginMode2D(cam);
-    DrawImg(buffer,fin,c,x,y,w,h,size);
+    ImgZoom(&cam.zoom);
+    DrawImg2(buffer,c,w,h,size);
     EndMode2D();
    EndDrawing();
  }

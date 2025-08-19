@@ -1,5 +1,5 @@
 *.ppm
-*.pmm~
-.\lib
-.\include
+*.ppm~
+lib/
+include/
 *.exe
