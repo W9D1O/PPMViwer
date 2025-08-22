@@ -1,31 +1,24 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#define ALTO 5
-#define ANCHO 8
+#define ALTO 1080
+#define ANCHO 1920
 #define BUFFER (ALTO*ANCHO)*3
 
+//Imagen de prueba color verde.
 void LoadImg(unsigned char img[],int len,char header[]){
-  char img2[] = {
-    0, 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-    0, 3,  3,  3,  3,  0,  0,  7,  7,  7,  7,  0,  0, 11, 11, 11, 11,  0,  0, 15, 15, 15, 15,  0,
-    0, 3,  0,  0,  0,  0,  0,  7,  0,  0,  0,  0,  0, 11,  0,  0,  0,  0,  0, 15,  0,  0, 15,  0,
-    0, 3,  3,  3,  0,  0,  0,  7,  7,  7,  0,  0,  0, 11, 11, 11,  0,  0,  0, 15, 15, 15, 15,  0,
-    0, 3,  0,  0,  0,  0,  0,  7,  0,  0,  0,  0,  0, 11,  0,  0,  0,  0,  0, 15,  0,  0,  0,  0,
-  };
-  int len2 = sizeof(img2)/sizeof(img2[0]);
-  for(int j = len; j < len2-3;j += 3){
-    img[j] =  img2[j];
-    img[j+1]= img2[j+1];
-    img[j+2]= img2[j+2];
+  for(int j = len; j < BUFFER-3;j += 3){
+    img[j] =  0;
+    img[j+1]= 255;
+    img[j+2]= 0;
     }
   
 }
 int main()
 {
   unsigned char* img = (unsigned char*)malloc(BUFFER);
-  char header[32];
-  sprintf(header, "P6\n%d %d\n16\n", ANCHO, ALTO);
+  char header[16];
+  sprintf(header, "P6\n%d %d\n255\n", ANCHO, ALTO);
   int len = sizeof(header)/sizeof(header[0])-1;
   printf("%d\n",len);
   FILE *f;

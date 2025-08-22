@@ -178,9 +178,31 @@ uint32_t SizeFile(FILE *f){
   return size;
 }
 
-int main(){
+/*Controla que el programa haya*
+* recibido algún argumento      */
+int arg(int argc){
+
+  if(argc > 1 && argc < 3){
+    return 0;
+  }else{
+    if(argc < 2){
+      printf("ERROR: No se encontro el archivo.\n");
+      printf("El modo de uso es: .\\vppm ejemplo.ppm\n");
+      exit(1);
+    } else if(argc > 2){
+      printf("ERROR: Demaciados argumentos.\n");
+      printf("El modo de uso es: .\\vppm ejemplo.ppm\n");
+      exit(1);
+    }
+  }
+  return -1;
+}
+
+int main(int argc, char* argv[]){
+
+  arg(argc);
   FILE *f;
-  f = fopen("simple.ppm","rb");
+  f = fopen(argv[1],"rb");
   if(f == NULL){
     printf("Archivo no encontrado\n");
     exit(1);
