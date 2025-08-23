@@ -199,7 +199,6 @@ int arg(int argc){
 }
 
 int main(int argc, char* argv[]){
-
   arg(argc);
   FILE *f;
   f = fopen(argv[1],"rb");
@@ -229,9 +228,7 @@ int main(int argc, char* argv[]){
   int sh = 0;
   Color c;
   CutHeader(buffer,&sw,&sh, lh);
-  InitZoom(&cam.zoom,sw,sh);
-  printf("%d %d\n",size,lh);
-  InitWindow(ANCHO,ALTO, "vamos a ver que es lo que pasa");
+  InitWindow(ANCHO,ALTO, "PPM Viwer");
   SetTargetFPS(60);
   while (!WindowShouldClose()) {
     BeginDrawing();
@@ -243,6 +240,5 @@ int main(int argc, char* argv[]){
     EndDrawing();
   }
   CloseWindow();
-
   return 0;
 }
